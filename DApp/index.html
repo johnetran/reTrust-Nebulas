@@ -1,0 +1,556 @@
+<!doctype>
+<html>
+<head>
+
+	<!--<link href="dist/css/jquery-ui.css" rel="stylesheet">-->
+	<link href="dist/css/bootstrap.css" rel="stylesheet">
+	<link href="dist/css/reTrustDApp.css" rel="stylesheet">
+
+
+	<script type="text/javascript" src="dist/js/jquery.js"></script>
+	<script type="text/javascript" src="dist/js/popper.min.js"></script>
+	<!--<script type="text/javascript" src="dist/js/jquery-ui.js"></script>-->
+	<script type="text/javascript" src="dist/js/bignumber.min.js"></script>
+	<script type="text/javascript" src="dist/js/bootstrap.js"></script>
+	<script type="text/javascript" src="dist/js/nebulas.js"></script>
+ 	<script type="text/javascript" src="dist/js/nebPay.js"></script>
+	<!-- reTrust object defined in reTrustClient.js-->
+	<script type="text/javascript" src="dist/js/reTrustClient.js"></script> 
+	<script type="text/javascript" src="dist/js/reTrustDApp.js"></script> 
+	
+</head>
+
+<body>
+	<main role="main">
+		<div class=" py-5 bg-light">
+				<div class="container">		
+					<div class="row">
+						<div class="col-lg-3 col-md-12">
+							<section class=" text-center">
+								<div class="container">
+									<a href="https://nebulas.io" target="_blank"><img src="images/nebulasx60.png" style="width: 12em;margin-left: -0.5em;" alt="Nebulas"/></a>
+									<div class="text-center rocks">rocks</div>
+									<h1 class="display-3 lefttitle">re:Trust</h1>
+									<p class="lead text-muted">In real estate and other domains, an agreement is a meeting of minds, where a buyer agrees to purchase property from a seller by committing a deposit. In many jurisdictions, a trusted common organization such as a real estate brokerage or law office holds the deposit "in trust" for the buyer, until the parties either fulfill the agreement, or mutually release each other from it.</p>
+									<p class="lead text-muted">When a common organization is lacking or untrusted to hold deposits, a blockchain can fill this role. Unlike in the traditional real estate transaction where only the buyer submits a deposit, we believe the seller should also submit a deposit, to ensure both parties have collateral in the agreement.</p>
+								</div>
+							</section>
+						</div>
+						<div class="col-lg-9 col-md-12">
+							<div id="errorcard" class="row pt-4 d-none">
+								<div class="col-md-12">
+									<div class="card border-danger mb-3">
+										<div id="errorcardheader" class="card-header"></div>
+										<div class="card-body text-danger">
+											<h5 id="errorcardtitle" class="card-title"></h5>
+											<p id="errorcardtext" class="card-text"></p>
+										</div>
+									</div>														
+								</div>
+							</div>
+					
+							<div class="row pt-2">
+								<div class="col-md-12">
+									<div  id="accountinfo" class="float-right m-2 d-none">
+										<div class="float-right">
+											<small>Your<!--<span id="accountNet"> </span>--> Account: <b><span id="ouraccount"></span></b></small>
+											<button id="getAccount" class="btn btn-primary btn-sm"><small><span id="ourbalance">0</span> NAS</small></button>
+											<input id="autoRefreshAccount" type="checkbox" value="autorefresh"> <small>Auto Refresh <span id="autoRefreshCountdown"></span></small>
+										</div>
+									</div>		
+								</div>
+							</div>
+							<div class="row pt-4">
+								<div class="col-md-12">
+									<nav>
+										<div class="nav nav-tabs" id="nav-tab" role="tablist">
+											<a class="nav-item nav-link active" id="nav-start-tab" data-toggle="tab" href="#nav-start" role="tab" aria-controls="nav-start" aria-selected="true">Enter Agreement</a>
+											<a class="nav-item nav-link" id="nav-instructions-tab" data-toggle="tab" href="#nav-instructions" role="tab" aria-controls="nav-instructions" aria-selected="true">Instructions</a>
+											<a class="nav-item nav-link" id="nav-methodology-tab" data-toggle="tab" href="#nav-methodology" role="tab" aria-controls="nav-methodology" aria-selected="false">Methodology</a>
+											<a class="nav-item nav-link" id="nav-scenarios-tab" data-toggle="tab" href="#nav-scenarios" role="tab" aria-controls="nav-scenarios" aria-selected="false">Scenarios</a>
+										</div>
+									</nav>
+									<div class="tab-content" id="nav-tabContent">
+										<div class="tab-pane fade show active" id="nav-start" role="tabpanel" aria-labelledby="nav-home-tab">
+											<div id="nebnetwork" class="row d-none">
+												<div class="col-md-12">
+													<div class="input-group mb-3">
+														<div class="input-group-prepend">
+															<div class="input-group-text">
+																	<input id="mainnet" type="radio" name="nebnetwork" value="Mainnet">
+															</div>
+														</div>
+														<span class="input-group-text">Mainnet</span>
+														<div class="input-group-prepend">
+																<div class="input-group-text">
+																		<input id="testnet" type="radio" name="nebnetwork" value="Testnet" checked>
+																</div>
+															</div>
+															<span class="input-group-text">Testnet</span>
+														</div>
+												</div>
+											</div>
+											<div id="find" class="row">
+												<div class="col-md-12">
+													<div id="find" class="card">
+														<div class="card-header">Start Here</div>
+														<div class="card-body">
+															<p class="card-text">Enter the other party's Nebulas address and a reference keyword for the agreement you both have agreed to use.</p>
+					
+															<div class="input-group mb-3">
+																<input id="them" type="text" class="form-control" placeholder="Other Party's Nebulas Address"
+																	value="">
+																<input id="reference" type="text" class="form-control" placeholder="Reference Keyword" 
+																	value="">
+																<button id="findAgreement" type="button" class="btn btn-primary">Go</button>
+															</div>
+														
+															<!-- TODO use model: <div id="findMsg" class="alert hidden" role="alert"></div>-->
+														</div>		
+													</div>
+												</div>
+											</div>
+											<div id="multi" class="row d-none">
+												<div class="col-md-12">
+													<div class="card">
+														<div class="card-header">Multiple Agreements Found</div>
+														<div class="card-body">
+															<p class="card-text">You and the other party had agreements with the same reference keyword where you were a buyer in one and a seller in the other. Please select which agreement you want to manage.</p>
+															<button id="multiSelectBuyer" type="button" class="btn btn-primary">You as the Buyer</button>
+															<button id="multiSelectSeller" type="button" class="btn btn-primary">You as the Seller</button>
+														</div>		
+													</div>		
+												</div>
+											</div>
+	
+											<input id="selectedSide" type="hidden" value="" />
+	
+											<div id="themandref" class="row d-none">
+												<div class="col-md-12">
+													<div class="input-group mb-3">
+															<div class="input-group-prepend">
+																<span class="input-group-text">Other Party's Address</span>
+															</div>
+															<input id="themreadonly" type="text" class="form-control" readonly/>
+													</div>
+													<div class="input-group mb-3">
+															<div class="input-group-prepend">
+																<span class="input-group-text">Reference Keyword</span>
+															</div>
+															<input id="refreadonly" type="text" class="form-control" readonly/>
+													</div>
+												</div>
+											</div>
+												
+											<div id="details" class="row d-none">
+												<div class="col-md-12">
+													<div class="card">
+														<div class="card-header">
+																Agreement Details<button id="updateDetails" type="button" class="btn btn-primary btn-sm float-right">Update</button>
+														</div>
+														<div class="card-body">
+															<!--<p class="card-text">Here is the current status and details of your agreement.</p>-->
+															<ul id="detailslist">
+
+															</ul>
+																	
+														</div>		
+													</div>		
+												</div>
+											</div>
+
+											<div id="initiate" class="row d-none">
+												<div class="col-md-12">
+													<div  class="card">
+															<div class="card-header">Initiate Agreement</div>
+															<div class="card-body">
+																<p id="inittextnoagt" class="card-text d-none">Initiate your side of the agreement first, by indicating whether you are the buyer or seller, sending your deposit to be held in the smart contract, and indicating what you expect the other party to deposit. The other party must also initiate with the reference keyword above, a deposit meeting or exceeding your expectation, and what they expect your deposit should be.</p>
+																<p id="inittextyesagt" class="card-text d-none">The other party has initiated the agreement. Initiate your side by sending your deposit to be held in the smart contract, and indicating what you expect the other party to deposit. Your deposit must meet or exceed the other part's expectation and the other party's deposit must meet or exceed your expectation.</p>
+																<div class="input-group mb-3">
+																	<div class="input-group-prepend">
+																		<div class="input-group-text">
+																				<input id="initsidebuyer" type="radio" name="initside" value="buyer">
+																		</div>
+																	</div>
+																	<span class="input-group-text">Buyer</span>
+																	<div class="input-group-prepend">
+																		<div class="input-group-text">
+																				<input id="initsideseller" type="radio" name="initside" value="seller">
+																		</div>
+																	</div>
+																	<span class="input-group-text">Seller</span>
+																		<input id="initiateDeposit" type="text" class="form-control" placeholder="Your Deposit"  value="">
+																	<div class="input-group-append">
+																		<span class="input-group-text">NAS</span>
+																	</div>
+																	<input id="initiateExpectation" type="text" class="form-control" placeholder="Their Deposit" value="">
+																	<div class="input-group-append">
+																		<span class="input-group-text">NAS</span>
+																	</div>																	
+																	<button id="initiateAgreement" type="button" class="btn btn-primary">Initiate</button>
+																</div>
+
+																<div id="initStatusSection" class="row">
+																	<div class="col-md-8">
+																		<div id="inithash"></div>
+																	</div>
+																	<div class="col-md-2">
+																		<div id="initstatus"></div>
+																	</div>																		
+																	<div class="col-md-2">
+																		<!--<button id="refreshInitStatus" type="button" class="btn btn-primary d-none">Refresh</button>-->
+																		<button id="initNextStep" type="button" class="btn btn-primary btn-sm d-none">Next Step</button>
+																	</div>
+																</div>
+															</div>		
+													</div>
+												</div>
+											</div>
+
+											<div id="reclaim" class="row d-none">
+													<div class="col-md-12">
+														<div class="card">
+															<div class="card-header">Reclaim Excess Deposit</div>
+															<div class="card-body">
+																<p class="card-text">If more deposit has been submitted than expected, the excess deposit can be reclaimed. If the agreement is still not valid where deposits have not met or exceeded expected amounts on either side, the entire deposit will be reclaimed.</p>
+																<button id="reclaimDeposit" type="button" class="btn btn-primary">Reclaim</button>
+																<div id="reclaimStatusSection" class="row">
+																	<div class="col-md-9">
+																		<div id="reclaimhash"></div>
+																	</div>
+																	<div class="col-md-3">
+																		<div id="reclaimstatus"></div>
+																	</div>
+																</div>
+															</div>		
+														</div>			
+													</div>
+												</div>
+												<div id="add" class="row d-none">
+													<div class="col-md-12">
+														<div class="card">
+															<div class="card-header">Add Deposit</div>
+															<div class="card-body">
+																<p class="card-text">If the actual deposit submitted does not meet or exceed the expected amount, the agreement is not valid.  Add more deposit to the agreement to meet or exceed the expected amount, in order to make the agreement valid.</p>
+																<div class="input-group mb-3" style="width: 18rem;">
+																	<input id="additionalDeposit" type="text" class="form-control" placeholder="Additional Deposit" value="">
+																	<div class="input-group-append">
+																		<span class="input-group-text">NAS</span>
+																	</div>
+																	<button id="addDeposit" type="button" class="btn btn-primary">Add</button>		
+																</div>
+	
+																<div id="addStatusSection" class="row">
+																	<div class="col-md-9">
+																		<div id="addhash"></div>
+																	</div>
+																	<div class="col-md-3">
+																		<div id="addstatus"></div>
+																	</div>
+																</div>
+															</div>		
+														</div>
+													</div>
+												</div>
+												<div id="fulfill" class="row d-none">
+													<div class="col-md-12">
+														<div class="card">
+															<div class="card-header">Fulfill Agreement</div>
+															<div class="card-body">
+																<p class="card-text">In order to fulfill the agreement, both parties must act. The buyer must send a balance in NAS and the seller must indicate what balance is expected. The balance must meet or exceed the expected balance in order for fulfillment to succeed.</p>
+																<div class="input-group mb-3" style="width: 18rem;">
+																	<input id="balance" type="text" class="form-control" placeholder="Balance" value="">
+																	<div class="input-group-append">
+																		<span class="input-group-text">NAS</span>
+																	</div>																	
+																	<button id="fulfillAgreement" type="button" class="btn btn-primary">Fulfill</button>
+																</div>
+																<div id="fulfillStatusSection" class="row">
+																	<div class="col-md-9">
+																		<div id="fulfillhash"></div>
+																	</div>
+																	<div class="col-md-3">
+																		<div id="fulfillstatus"></div>
+																	</div>
+																</div>																	
+															</div>		
+														</div>	
+													</div>
+												</div>											
+												<div id="release" class="row d-none">
+													<div class="col-md-12">
+														<div class="card">
+															<div class="card-header">Mutual Release Agreement</div>
+															<div class="card-body">
+																<p class="card-text">In order to mutually release each other from the agreement, each must indicate how much should be returned to one another, by enter a percentage from 0-200. The percentages from both sides must total exactly 200. Please see the methodology for more details.</p>
+																<div class="input-group mb-3" style="width: 18rem;">
+																	<input id="percentage" type="text" class="form-control" placeholder="Percentage" value="">
+																	<div class="input-group-append">
+																			<span class="input-group-text">%</span>
+																	</div>																	
+																	<button id="releaseAgreement" type="button" class="btn btn-primary">Release</button>
+																</div>
+
+																<div id="releaseStatusSection" class="row">
+																	<div class="col-md-9">
+																		<div id="releasehash"></div>
+																	</div>
+																	<div class="col-md-3">
+																		<div id="releasestatus"></div>
+																	</div>
+																</div>
+															</div>		
+														</div>			
+													</div>
+												</div>	
+										</div>
+
+
+										<div class="tab-pane fade" id="nav-instructions" role="tabpanel" aria-labelledby="nav-instructions-tab">
+											<p>Steps:</p>
+											<ul>
+												<li>
+													<b>0.</b> Query to <b>see if an agreement already exists</b> by entering the other party's Nebulas address and a reference keyword for the agreement and click Go. 
+													<br>Once queried, this information will be used until it is queried again.<br/>
+												</li>
+												<li>
+													<b>1.</b> A <b>buyer or seller initiates</b> by entering a <b>deposit</b> (sent into the smart contract) and <b>what deposit is expected</b> from the other party.  Click Initiate (then Next Step to see the next available actions).<br/>
+												</li>
+												<li>
+													<b>2.</b> The <b>other side will then initiate</b> by entering <b>their deposit</b> (sent into the smart contract) and <b>what deposit they expect</b> from the first party's. The click Initiate (then Next Step to see the next available actions).
+													<br/>(If either party's deposit meets or exceeds each other's expectation, a valid agreement is formed; otherwise, the agreement remains invalid).<br/>
+												</li>
+												<li>
+													<b>3.</b> <b>While the agreement is invalid</b>, either party <b>can reclaim</b> their deposit. They <b>can also add more deposit</b> in anticipation to meeting the other party's expectation.<br/>
+													<ul>
+														<li>
+															<b>3a.</b> To <b>reclaim</b> a deposit, just click Reclaim.<br/>
+														</li>
+														<li>
+															<b>3b.</b> To <b>add more</b> deposit, enter the deposit (sent to the smart contract) and click Add.<br/>
+														</li>
+													</ul>
+												</li>
+												<li>
+													<b>4.</b> <b>If the agreement becomes valid</b>, the parties <b>can fulfill</b> the agreement <b>or mutually release</b> each other from it.<br/>
+													<ul>
+														<li>
+															<b>4a.</b> To <b>fulfill</b> the agreement, the buyer enters the balance funds to be sent into the smart contract, and clicks Fulfill.  
+															<br>The seller simply indicates the expected balance (no funds are sent by the seller) and clicks Fulfill.
+															<br/>(When an agreement is fulfilled, the <b>seller gets his entire deposit back, plus the expected deposit and balance</b> amounts from the buyer).<br/>
+														</li>
+														<li>
+															<b>4b.</b> To <b>mutually release</b> the agreement, each party enters a percentage between 0 - 200 and clicks Release. 
+															<br>(The first 100 (0-100) indicates <b>how much each gets their own</b> deposit back; the next 100 (101-200) indicates <b>how much each gets from the other</b> party's deposit).<br/>
+														</li>				
+													</ul>
+												</li>
+											</ul>
+										</div>
+
+										<div class="tab-pane fade" id="nav-methodology" role="tabpanel" aria-labelledby="nav-methodology-tab">
+											<p>The following is the methodology around when an agreement is valid and when it is not, and what can happen to the funds in the agreement under each scenario.</p>
+											<p>A valid agreement is formed when:</p>
+											<ul>
+												<li>buyer submits deposits that meet or exceed seller's expectation; and</li>
+												<li>seller submits deposits that meet or exceed buyer's expectation</li>
+											</ul>
+											<p>In a valid agreement, any funds that exceed the other party's expectation can be reclaimed by the submitting party.</p>
+											<p>An agreement is invalid when:</p>
+											<ul>
+												<li>buyer submits deposits that total less than seller's expectation; or</li>
+												<li>seller submits deposits that total less than buyer's expectation</li>
+											</ul>
+											<p>Funds submitted under an invalid agreement, can be reclaimed by each party anytime.</p>
+											<p>A valid agreement can be fulfilled or mutually released by both parties.</p>
+											<p>To fulfill an agreement:</p>
+											<ul>
+												<li>both parties must indicate that it is fulfilled</li>
+												<li>buyer submits a balance meeting or exceeding seller's expectation</li>
+											</ul>
+											<p>If agreement is not fulfilled, the buyer can reclaim the balance anytime, but not necessarily the deposit, depending on whether the agreement is valid or not (see above).</p>
+											<p>If agreement is fulfilled:</p>
+											<ul>
+												<li>
+													seller gets:
+													<ul>
+														<li>seller's full deposit back</li>
+														<li>plus expected portion of buyer's deposit</li>
+														<li>plus expected portion of buyer's balance</li>
+													</ul>
+												</li>
+												<li>
+													buyer gets:
+													<ul>
+														<li>excess portion of buyer's balance</li>
+														<li>excess portion of buyer's deposit</li>
+													</ul>
+												</li>
+											</ul>
+											<p>The parties can choose to mutually release each other from the agreement and indicate how much of each party's deposit should be returned to each other.</p>
+											<p>To mutually release each other from the agreement:</p>
+											<ul>
+												<li>both parties must indicate that the agreement is mutually released</li>
+												<li>each party must indicate their respective percentage of the deposits between 0-200, together totalling 200</li>
+												<li>a percentage of 0 means the party gets no deposit back</li>
+												<li>a percentage between 0-100 means the party gets some of its own deposit back</li>
+												<li>a percentage of 100 means the party gets all its own deposit back</li>
+												<li>a percentage over 100 means the party gets some of the other party's deposit, in addition to all of its own</li>
+												<li>a percentage of 200 means the party gets all of both parties' deposits back</li>
+												<li>the other party must indicate a complementary percentage that add up to 200 (i.e. buyer's portion plus seller's portion must equal 200)</li>
+											</ul>
+											<p>When an agreement is released:</p>
+											<ul>
+												<li>buyer gets buyer's full balance back</li>
+												<li>buyer gets buyer's portion of the deposits back, if any, based on the indicated percentage (see above)</li>
+												<li>seller gets seller's portiono f the deposits back, if any, based on the indicated percentage (see above)</li>
+											</ul>
+										</div>
+										<div class="tab-pane fade" id="nav-scenarios" role="tabpanel" aria-labelledby="nav-scenarios-tab">
+											<div class="card bg-primary text-white border-primary m-3">
+													<div class="card-body">
+														<h5 class="card-title">Buyer Checks Agreement</h5>
+														<p class="card-text">The agreement does not exist.</p>
+														<img src="images/BuyerUninit1.png" class="img-fluid rounded border border-dark" alt="No Agreement Initiated Yet.">
+													</div>
+												</div>
+											<div class="card bg-primary text-white border-primary m-3">
+												<div class="card-body">
+													<h5 class="card-title">Buyer Initiates</h5>
+													<p class="card-text">The buyer initiates the agreement by sending a deposit and what is expected from the seller. Clicking next step will show the agreement status and next available actions.</p>
+													<img src="images/BuyerInitiatedSuccess.png" class="img-fluid rounded border border-dark" alt="Buyer Initiated.">
+												</div>
+											</div>
+											<div class="card bg-primary text-white border-primary m-3">
+												<div class="card-body">
+													<h5 class="card-title">Buyer Reclaims Deposit</h5>
+													<p class="card-text">After initiating, the buyer can see the details of the agreement and its current status.</p>
+													<img src="images/BuyerInitiatedStatus.png" class="img-fluid rounded border border-dark" alt="Agreeement 1 Status.">
+													<p class="card-text">Since the agrement is invalid until the seller sends the expected deposit and their expectation, the buyer is able to click reclaim to get their deposit back.</p>
+													<img src="images/BuyerClickedReclaim.png" class="img-fluid rounded border border-dark" alt="Buyer Reclaimed.">
+													<p class="card-text">After reclaiming the deposit, the buyer can see that his deposit goes back to 0 NAS.</p>
+													<img src="images/BuyerDepositZero.png" class="img-fluid rounded border border-dark" alt="Zero NAS.">
+
+													<!--
+													<p class="card-text">The interaction with the smart contract is displayed.</p>
+													<img src="images/BuyerReclaimPending.png" class="img-fluid rounded border border-dark" alt="Buyer initiated.">
+													<img src="images/BuyerReclaimSuccess.png" class="img-fluid rounded border border-dark" alt="Buyer initiated.">
+													-->
+												</div>
+											</div>
+											<div class="card bg-primary text-white border-primary m-3">
+												<div class="card-body">
+													<h5 class="card-title">Buyer Adds Deposit</h5>
+													<p class="card-text">The buyer reconsiders and decides to add back the deposit.</p>
+													<img src="images/BuyerAddDepositPending.png" class="img-fluid rounded border border-dark" alt="Buyer Added Deposit - Pending.">
+													<img src="images/BuyerAddDepositSuccess.png" class="img-fluid rounded border border-dark" alt="Buyer Added Deposit - Success.">
+												</div>
+											</div>
+											<div class="card bg-primary text-white border-primary m-3">
+												<div class="card-body">
+													<h5 class="card-title">Seller Initiates</h5>
+													<p class="card-text">The seller queries the agreement and initiates their side.</p>
+													<img src="images/SellerInitiating.png" class="img-fluid rounded border border-dark" alt="Seller Initiates.">
+													<p class="card-text">... but they did not add enough deposit, so the agreement remains invalid.</p>
+													<img src="images/SellerNotEnoughDeposit.png" class="img-fluid rounded border border-dark" alt="Seller Initiates.">
+												</div>
+											</div>
+
+											<div class="card bg-primary text-white border-primary m-3">
+												<div class="card-body">
+													<h5 class="card-title">Seller Adds Deposit</h5>
+													<p class="card-text">The seller adds more deposit to meet the buyer's expectation.</p>
+													<img src="images/SellerAddDeposit.png" class="img-fluid rounded border border-dark" alt="Seller Adds Deposit.">
+													<p class="card-text">Now the agreement becomes valid, and can be fulfilled or released.</p>
+													<img src="images/SellerFulfillRelease.png" class="img-fluid rounded border border-dark" alt="Seller Fulfill / Release.">
+												</div>
+											</div>
+
+											<div class="card bg-primary text-white border-primary m-3">
+												<div class="card-body">
+													<h5 class="card-title">Buyer and Seller Mutual Release</h5>
+													<p class="card-text">The seller and buyer couldn't agree complete the agreement, so they agree to mutually release each other's deposits.</p>
+													<p class="card-text">The buyer submits a release with 100% as the release percentage.</p>
+													<img src="images/BuyerReleaseSuccess.png" class="img-fluid rounded border border-dark" alt="Buyer Release Completed.">
+													<img src="images/BuyerReleaseStatus.png" class="img-fluid rounded border border-dark" alt="Buyer Release Status.">
+													<p class="card-text">The seller does the same.</p>
+													<img src="images/SellerReleaseStatus.png" class="img-fluid rounded border border-dark" alt="Seller Release.">
+													<p class="card-text">Now the mutual release is completed.</p>
+													<img src="images/SellerReleaseCompleted.png" class="img-fluid rounded border border-dark" alt="Seller Release.">
+													<p class="card-text">The buyer sees the same status.</p>
+													<img src="images/BuyerReleaseCompleted.png" class="img-fluid rounded border border-dark" alt="Seller Release.">
+												</div>
+											</div>
+
+											<div class="card bg-primary text-white border-primary m-3">
+												<div class="card-body">
+													<h5 class="card-title">Buyer and Seller Fulfillment</h5>
+													<p class="card-text">The seller and buyer agree on another transaction.</p>
+													<p class="card-text">The buyer initiates an agreement with the same seller but a different reference key, deposit amounts and expectations.</p>
+													<img src="images/BuyerStatus2.png" class="img-fluid rounded border border-dark" alt="Buyer Initiates New.">
+													<p class="card-text">The seller does the same and submits the fulfillment first, indicating the balance they expect from the buyer.</p>
+													<img src="images/SellerFulfills2.png" class="img-fluid rounded border border-dark" alt="Seller Fulfills.">
+													<p class="card-text">The buyer does fulfills buy sending the expected balance.</p>
+													<img src="images/BuyerFulfills2.png" class="img-fluid rounded border border-dark" alt="Buyer Fulfills.">
+													<p class="card-text">The agreement is now fulfilled.</p>
+													<img src="images/BuyerFulfillCompleted.png" class="img-fluid rounded border border-dark" alt="Seller Fulfill Completed.">
+													<p class="card-text">The seller sees the same status.</p>
+													<img src="images/SellerFulfillCompleted.png" class="img-fluid rounded border border-dark" alt="Seller Fulfilled Completed.">
+												</div>
+											</div>											
+										</div>
+									</div>
+						
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div><small>* There is a small Nebulas GAS fee for submitting transactions to the Nebulas blockchain.</small></div>
+									<div><small>* There are currently no transaction fees from our Smart Contract until later in 2018 (our future model is to charge a nominal transaction fee equal to a small percentage of the funds paid out when an agreement is fulfilled or mutually released).</small></div>
+									<!--<div><small>* While we make every effort to ensure the alpha version of this Decentralized App (DApp) and the underlying Smart Contract function properly, we cannot guarantee or fully control that they will under all circumstances. You are solely responsible for any claims, injuries, damages, expenses or losses as a result of using this system.</small></div>-->
+									<div><small>* This DApp and the underlying Smart Contract is still being improved - please test this system out with small amounts of NAS first.  Thank you for trying and using!</small></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modalcard" tabindex="-1" role="dialog" aria-labelledby="modalcardTitle" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="modalcardLongTitle"></h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="card border-danger mb-3">
+									<div id="modalcardheader" class="card-header"></div>
+									<div class="card-body text-danger">
+										<h5 id="modalcardtitle" class="card-title"></h5>
+										<p id="modalcardtext" class="card-text"></p>
+									</div>
+								</div>														
+							</div>
+						</div>
+						<div class="modal-footer">
+						</div>
+					</div>
+				</div>
+			</div>			
+		
+	</main>	
+
+    <footer class="text-muted">
+		<div class="container">
+			<p class="float-right">
+				<a href="#">Back to top</a>
+			</p>
+			<p>&copy; <a href="https://nebulas.rocks" target="_blank">Nebulas Rocks</a> - Contact: <a href="mailto:reTrust@nebulas.rocks">reTrust@nebulas.rocks</a></p>
+		</div>
+	</footer>
+</body>
+</html>
